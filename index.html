@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NotulenPro — Workspace Catatan Hasil Rapat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest" crossorigin="anonymous"></script>
+  <style>
+    /* ==========================================
+       DESIGN TOKENS & RESET — ARCHIVAL LEDGER FRAME
+       ========================================== */
+    :root {
+      --color-primary: #0F523E;
+      --color-primary-hover: #0A3B2C;
+      --color-primary-soft: #ECFDF5;
+      --color-accent: #0F6B52;
+      --color-accent-soft: #ECFDF5;
+      --color-warning: #B45309;
+      --color-warning-soft: #FFFBEB;
+      --color-background: #F7F7F8;
+      --color-surface: #FFFFFF;
+      --color-surface-muted: #FAFAFA;
+      --color-border: #E4E4E7;
+      --color-border-strong: #D4D4D8;
+      --color-ink: #18181B;
+      --color-text: #18181B;
+      --color-muted: #71717A;
+      --color-sidebar: #FFFFFF;
+      --color-sidebar-elevated: #FFFFFF;
+      --color-sidebar-text: #18181B;
+      --color-gold: #18181B;
+      --color-danger: #DC2626;
+      --color-danger-hover: #B91C1C;
+      --color-danger-soft: #FEF2F2;
+      --color-success: #0F523E;
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      --frame-border: 1.5px solid var(--color-ink);
+      --frame-shadow: 4px 4px 0 #E4E4E7;
+      --frame-shadow-sm: 3px 3px 0 #E4E4E7;
+      --frame-shadow-lg: 8px 8px 0 rgba(24, 24, 27, 0.16);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: var(--font-sans);
+      background-color: var(--color-background);
+      color: var(--color-text);
+      font-size: 14px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background-color: var(--color-primary);
+      color: var(--color-surface);
+    }
+
+    *:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(102, 97, 85, 0.35);
+      border-radius: 99px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(23, 26, 23, 0.55);
+    }
+
+    /* ==========================================
+       UTILITY & COMPONENT PRIMITIVES
+       ========================================== */
+    .hidden {
+      display: none !important;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      height: 36px;
+      padding: 0 14px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: transform 0.1s ease, background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease, box-shadow 0.14s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translate(1px, 1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: var(--color-surface);
+      border-color: var(--color-ink);
+      box-shadow: 2px 2px 0 var(--color-ink);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--color-primary-hover);
+      box-shadow: 3px 3px 0 var(--color-ink);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+      border-color: var(--color-ink);
+      box-shadow: 2px 2px 0 var(--color-border-strong);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: var(--color-surface-muted);
+      box-shadow: 2px 2px 0 var(--color-ink);
+    }
+
+    .btn-danger-outline {
+      background-color: var(--color-surface);
+      color: var(--color-danger);
+      border-color: #DCA8A2;
+    }
+
+    .btn-danger-outline:hover:not(:disabled) {
+      background-color: var(--color-danger-soft);
+      border-color: var(--color-danger);
+      box-shadow: 2px 2px 0 rgba(180, 50, 37, 0.25);
+    }
+
+    .btn-danger {
+      background-color: var(--color-danger);
+      color: #FFFFFF;
+      border-color: var(--color-ink);
+      box-shadow: 2px 2px 0 var(--color-ink);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background-color: var(--color-danger-hover);
+    }
+
+    .btn-sm {
+      height: 32px;
+      padding: 0 11px;
+      font-size: 12.5px;
+    }
+
+    .btn-icon-only {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--color-border-strong);
+      background-color: var(--color-surface);
+      color: var(--color-muted);
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .btn-icon-only:hover {
+      background-color: var(--color-surface-muted);
+      color: var(--color-ink);
+      border-color: var(--color-ink);
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: var(--space-4);
+    }
+
+    .form-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-muted);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 9px 12px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--color-ink);
+      background-color: var(--color-surface);
+      border: 1.5px solid var(--color-border-strong);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--color-ink);
+      box-shadow: 2px 2px 0 var(--color-primary);
+    }
+
+    /* ==========================================
+       APP FRAME (TOPBAR + SPLIT WORKSPACE + BOTTOM BAR)
+       ========================================== */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background-color: var(--color-background);
+    }
+
+    @media (min-width: 900px) {
+      body {
+        padding: 12px;
+        background-color: #EFEFF2;
+      }
+      .app-shell {
+        height: calc(100vh - 24px);
+        border: 2px solid var(--color-ink);
+        border-radius: var(--radius-md);
+        box-shadow: 6px 6px 0 #D4D4D8;
+      }
+    }
+
+    .topbar {
+      height: 58px;
+      flex-shrink: 0;
+      background-color: var(--color-surface);
+      border-bottom: 2px solid var(--color-ink);
+      padding: 0 var(--space-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      background-color: var(--color-surface);
+      border: 1.5px solid var(--color-ink);
+      box-shadow: 2px 2px 0 var(--color-ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-ink);
+      flex-shrink: 0;
+    }
+
+    .app-name {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+      line-height: 1;
+    }
+
+    .mode-badge {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 3px 9px;
+      border-radius: 3px;
+      background-color: var(--color-warning-soft);
+      color: var(--color-warning);
+      border: 1.5px solid var(--color-warning);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-badge::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+
+    .mode-badge.live {
+      background-color: var(--color-accent-soft);
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .workspace-hint {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      padding: 4px 10px;
+      border: 1px solid var(--color-border-strong);
+      border-radius: 3px;
+      background-color: var(--color-surface-muted);
+    }
+
+    .workspace {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* ==========================================
+       BOTTOM STATUS & CREDIT BAR
+       ========================================== */
+    .bottombar {
+      height: 32px;
+      flex-shrink: 0;
+      background-color: var(--color-surface);
+      border-top: 2px solid var(--color-ink);
+      padding: 0 var(--space-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-muted);
+    }
+
+    .bottombar-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .bottombar-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .bottombar-credit {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.02em;
+      color: var(--color-muted);
+      white-space: nowrap;
+    }
+
+    .bottombar-credit strong {
+      color: var(--color-ink);
+      font-weight: 600;
+    }
+
+    /* ==========================================
+       SIDEBAR (MEETING LIST — CRISP WHITE RAIL)
+       ========================================== */
+    .sidebar {
+      width: 328px;
+      flex-shrink: 0;
+      background-color: var(--color-sidebar);
+      border-right: 2px solid var(--color-ink);
+      color: var(--color-sidebar-text);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1.5px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background-color: var(--color-surface-muted);
+    }
+
+    .sidebar .btn-primary {
+      background-color: var(--color-ink);
+      color: #FFFFFF;
+      border-color: var(--color-ink);
+      box-shadow: 3px 3px 0 #D4D4D8;
+      font-weight: 700;
+      height: 40px;
+    }
+
+    .sidebar .btn-primary:hover:not(:disabled) {
+      background-color: #27272A;
+      box-shadow: 4px 4px 0 #A1A1AA;
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 11px;
+      width: 15px;
+      height: 15px;
+      color: var(--color-muted);
+      pointer-events: none;
+    }
+
+    .search-box input {
+      padding-left: 34px;
+      padding-right: 32px;
+      height: 36px;
+      font-size: 13px;
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--color-border-strong);
+      color: var(--color-ink);
+      border-radius: var(--radius-sm);
+    }
+
+    .search-box input::placeholder {
+      color: var(--color-muted);
+    }
+
+    .search-box input:focus {
+      background-color: #FFFFFF;
+      border-color: var(--color-ink);
+      box-shadow: 2px 2px 0 var(--color-ink);
+    }
+
+    .search-clear-btn {
+      position: absolute;
+      right: 6px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      border-radius: 3px;
+      background: transparent;
+      color: var(--color-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-clear-btn:hover {
+      background-color: #F4F4F5;
+      color: var(--color-ink);
+    }
+
+    .sidebar-section-bar {
+      padding: 10px 16px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+
+    .meeting-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .meeting-list::-webkit-scrollbar-thumb {
+      background: #D4D4D8;
+    }
+
+    .meeting-item {
+      width: 100%;
+      text-align: left;
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--color-border);
+      border-left: 4px solid var(--color-border-strong);
+      border-radius: var(--radius-sm);
+      padding: 12px 13px;
+      cursor: pointer;
+      display: block;
+      transition: background-color 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease, transform 0.12s ease;
+    }
+
+    .meeting-item:hover {
+      background-color: var(--color-surface-muted);
+      border-color: var(--color-ink);
+      border-left-color: var(--color-ink);
+    }
+
+    .meeting-item.active {
+      background-color: #FFFFFF;
+      border-color: var(--color-ink);
+      border-left: 5px solid var(--color-ink);
+      box-shadow: 3px 3px 0 var(--color-ink);
+    }
+
+    .meeting-item-title {
+      font-family: var(--font-serif);
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--color-ink);
+      margin-bottom: 6px;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .meeting-item-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-muted);
+    }
+
+    .note-count-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background-color: #F4F4F5;
+      border: 1px solid var(--color-border-strong);
+      color: var(--color-ink);
+      white-space: nowrap;
+    }
+
+    .meeting-item.active .note-count-tag {
+      background-color: var(--color-ink);
+      border-color: var(--color-ink);
+      color: #FFFFFF;
+    }
+
+    /* ==========================================
+       MAIN CONTENT AREA (MEETING DETAIL & NOTES)
+       ========================================== */
+    .main-pane {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 36px 56px;
+      background-color: var(--color-background);
+      background-image: radial-gradient(rgba(24, 24, 27, 0.055) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .detail-container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .mobile-back-bar {
+      display: none;
+      margin-bottom: var(--space-4);
+    }
+
+    .meeting-header-card {
+      background-color: var(--color-surface);
+      border: 1.5px solid var(--color-ink);
+      border-top: 5px solid var(--color-ink);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--frame-shadow);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .meeting-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      margin-bottom: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meeting-title-display {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+      margin: 0 0 12px 0;
+      line-height: 1.2;
+    }
+
+    .meeting-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--color-text);
+    }
+
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background-color: var(--color-surface-muted);
+      border: 1px solid var(--color-border-strong);
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    .meta-item svg {
+      color: var(--color-primary);
+    }
+
+    .meeting-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================
+       WORD-STYLE RICH TEXT COMPOSER (FRAMED SHEET)
+       ========================================== */
+    .composer-card {
+      background-color: var(--color-surface);
+      border: 1.5px solid var(--color-ink);
+      border-radius: var(--radius-md);
+      margin-bottom: 30px;
+      box-shadow: 5px 5px 0 #E4E4E7;
+      overflow: hidden;
+      transition: box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+
+    .composer-card:focus-within {
+      box-shadow: 5px 5px 0 var(--color-ink);
+    }
+
+    .editor-toolbar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 8px 12px;
+      background-color: var(--color-surface-muted);
+      border-bottom: 1.5px solid var(--color-border-strong);
+    }
+
+    .toolbar-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .toolbar-divider {
+      width: 1px;
+      height: 18px;
+      background-color: var(--color-border-strong);
+      margin: 0 6px;
+    }
+
+    .tool-btn {
+      width: 30px;
+      height: 29px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      border-radius: 3px;
+      background: transparent;
+      color: var(--color-ink);
+      cursor: pointer;
+      transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+    }
+
+    .tool-btn:hover {
+      background-color: var(--color-surface);
+      border-color: var(--color-border-strong);
+    }
+
+    .tool-btn.active {
+      background-color: var(--color-ink);
+      border-color: var(--color-ink);
+      color: var(--color-surface);
+    }
+
+    .rich-editor {
+      min-height: 120px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding: 16px 20px;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--color-ink);
+      outline: none;
+    }
+
+    .rich-editor:empty::before {
+      content: attr(data-placeholder);
+      color: var(--color-muted);
+      pointer-events: none;
+    }
+
+    .rich-editor ul, .rich-editor ol,
+    .note-rich-content ul, .note-rich-content ol {
+      margin: 6px 0;
+      padding-left: 22px;
+    }
+
+    .composer-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding: 10px 14px;
+      background-color: var(--color-surface-muted);
+      border-top: 1.5px solid var(--color-border-strong);
+      flex-wrap: wrap;
+    }
+
+    .category-selector {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .cat-btn {
+      height: 30px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 99px;
+      border: 1.5px solid var(--color-border-strong);
+      background-color: var(--color-surface);
+      color: var(--color-muted);
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .cat-btn:hover {
+      border-color: var(--color-ink);
+      color: var(--color-ink);
+    }
+
+    .cat-btn.active[data-cat="INFO"] {
+      background-color: var(--color-ink);
+      border-color: var(--color-ink);
+      color: var(--color-surface);
+    }
+
+    .cat-btn.active[data-cat="DECISION"] {
+      background-color: var(--color-primary);
+      border-color: var(--color-ink);
+      color: var(--color-surface);
+    }
+
+    .cat-btn.active[data-cat="ACTION"] {
+      background-color: var(--color-warning);
+      border-color: var(--color-ink);
+      color: var(--color-surface);
+    }
+
+    .composer-submit-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .kbd-hint {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-muted);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-strong);
+      border-radius: 3px;
+      padding: 2px 6px;
+    }
+
+    /* Notes List & Filter Bar */
+    .notes-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--color-ink);
+      margin-bottom: 16px;
+    }
+
+    .notes-section-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-ink);
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notes-count-pill {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background-color: var(--color-ink);
+      color: var(--color-surface);
+    }
+
+    .notes-filter-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-pill {
+      height: 28px;
+      padding: 0 10px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 3px;
+      border: 1px solid var(--color-border-strong);
+      background-color: var(--color-surface);
+      color: var(--color-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.12s ease;
+    }
+
+    .filter-pill:hover {
+      border-color: var(--color-ink);
+      color: var(--color-ink);
+    }
+
+    .filter-pill.active {
+      background-color: var(--color-ink);
+      border-color: var(--color-ink);
+      color: var(--color-surface);
+    }
+
+    .filter-pill-count {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      opacity: 0.78;
+    }
+
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .note-card {
+      background-color: var(--color-surface);
+      border: 1.5px solid var(--color-border-strong);
+      border-left: 5px solid var(--color-ink);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      box-shadow: var(--frame-shadow-sm);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-4);
+      transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+    }
+
+    .note-card[data-cat="DECISION"] {
+      border-left-color: var(--color-primary);
+    }
+
+    .note-card[data-cat="ACTION"] {
+      border-left-color: var(--color-warning);
+    }
+
+    .note-card:hover {
+      border-color: var(--color-ink);
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 #D4D4D8;
+    }
+
+    .note-card[data-cat="DECISION"]:hover {
+      border-left-color: var(--color-primary);
+    }
+
+    .note-card[data-cat="ACTION"]:hover {
+      border-left-color: var(--color-warning);
+    }
+
+    .note-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .note-top-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--color-border);
+    }
+
+    .note-badge {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 3px;
+      border: 1px solid transparent;
+    }
+
+    .note-badge.INFO {
+      background-color: var(--color-surface-muted);
+      color: var(--color-ink);
+      border-color: var(--color-border-strong);
+    }
+
+    .note-badge.DECISION {
+      background-color: var(--color-primary-soft);
+      color: var(--color-primary);
+      border-color: rgba(15, 82, 62, 0.35);
+    }
+
+    .note-badge.ACTION {
+      background-color: var(--color-warning-soft);
+      color: var(--color-warning);
+      border-color: rgba(154, 91, 10, 0.35);
+    }
+
+    .note-timestamp {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-muted);
+    }
+
+    .note-rich-content {
+      font-size: 15px;
+      color: var(--color-text);
+      margin: 0;
+      word-break: break-word;
+      line-height: 1.7;
+    }
+
+    .note-rich-content p {
+      margin: 0 0 6px 0;
+    }
+
+    .note-rich-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn-delete-note {
+      flex-shrink: 0;
+      opacity: 0.45;
+      transition: opacity 0.14s ease, background-color 0.14s ease, border-color 0.14s ease;
+    }
+
+    .note-card:hover .btn-delete-note,
+    .note-card:focus-within .btn-delete-note {
+      opacity: 1;
+    }
+
+    @media (hover: none) {
+      .btn-delete-note {
+        opacity: 1;
+      }
+    }
+
+    /* Empty & Placeholder States */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      background-color: var(--color-surface);
+      border: 1.5px dashed var(--color-ink);
+      border-radius: var(--radius-md);
+      box-shadow: var(--frame-shadow-sm);
+      color: var(--color-muted);
+    }
+
+    .empty-state-icon {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 14px;
+      border-radius: 6px;
+      background-color: var(--color-surface-muted);
+      border: 1.5px solid var(--color-ink);
+      box-shadow: 2px 2px 0 var(--color-border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+    }
+
+    .empty-state-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-ink);
+      margin: 0 0 6px 0;
+    }
+
+    .empty-state-desc {
+      font-size: 13.5px;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .empty-state-action {
+      margin-top: 18px;
+    }
+
+    /* ==========================================
+       MODAL DIALOG
+       ========================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(24, 24, 27, 0.48);
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+      z-index: 50;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 470px;
+      background-color: var(--color-surface);
+      border: 2px solid var(--color-ink);
+      border-radius: var(--radius-md);
+      box-shadow: var(--frame-shadow-lg);
+      overflow: hidden;
+      animation: modalPop 0.16s ease-out;
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      background-color: var(--color-surface-muted);
+      border-bottom: 1.5px solid var(--color-ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-ink);
+      margin: 0;
+    }
+
+    .modal-close {
+      background: var(--color-surface);
+      border: 1.5px solid var(--color-border-strong);
+      border-radius: 4px;
+      color: var(--color-ink);
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.12s ease;
+    }
+
+    .modal-close:hover {
+      border-color: var(--color-ink);
+      background-color: var(--color-danger-soft);
+      color: var(--color-danger);
+    }
+
+    .modal-body {
+      padding: 20px;
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 12px 20px;
+      background-color: var(--color-surface-muted);
+      border-top: 1.5px solid var(--color-border-strong);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* ==========================================
+       TOAST NOTIFICATION
+       ========================================== */
+    .toast-container {
+      position: fixed;
+      bottom: 44px;
+      right: 24px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 360px;
+    }
+
+    .toast {
+      background-color: var(--color-ink);
+      color: var(--color-surface);
+      padding: 11px 16px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--color-ink);
+      border-left: 5px solid #D4D4D8;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 4px 4px 0 rgba(24, 24, 27, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      animation: modalPop 0.16s ease-out;
+    }
+
+    .toast.error {
+      background-color: var(--color-danger);
+      border-left-color: #FAD2CD;
+    }
+
+    .toast.success {
+      background-color: var(--color-primary);
+      border-left-color: #9EE2C8;
+    }
+
+    /* ==========================================
+       RESPONSIVE BREAKPOINTS (TABLET & MOBILE)
+       ========================================== */
+    @media (max-width: 899px) {
+      .topbar {
+        padding: 0 14px;
+        height: 54px;
+      }
+
+      .bottombar {
+        padding: 0 14px;
+        justify-content: center;
+      }
+
+      .bottombar-left {
+        display: none;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+      }
+
+      .main-pane {
+        display: none;
+        padding: 16px 14px 40px;
+      }
+
+      .workspace.mobile-detail-open .sidebar {
+        display: none;
+      }
+
+      .workspace.mobile-detail-open .main-pane {
+        display: block;
+      }
+
+      .mobile-back-bar {
+        display: block;
+      }
+
+      .meeting-header-card {
+        flex-direction: column;
+        padding: 16px;
+      }
+
+      .meeting-title-display {
+        font-size: 22px;
+      }
+
+      .meeting-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .workspace-hint,
+      .kbd-hint {
+        display: none;
+      }
+
+      .composer-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .composer-submit-wrap {
+        width: 100%;
+      }
+
+      .composer-submit-wrap .btn {
+        width: 100%;
+      }
+
+      .toast-container {
+        left: 14px;
+        right: 14px;
+        bottom: 42px;
+        max-width: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       WORKSPACE UTAMA (TANPA LOGIN / AKSES LANGSUNG)
+       ========================================== -->
+  <div id="appShell" class="app-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="brand-mark" aria-hidden="true">
+          <i data-lucide="book-open-text" style="width:15px;height:15px;"></i>
+        </span>
+        <span class="app-name">NotulenPro</span>
+        <span id="envBadge" class="mode-badge">PREVIEW</span>
+      </div>
+      <div class="topbar-right">
+        <span class="workspace-hint">Ruang Notulen Langsung</span>
+        <button type="button" id="btnRefreshData" class="btn btn-secondary btn-sm" title="Muat Ulang Data">
+          <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+          <span>Segarkan</span>
+        </button>
+      </div>
+    </header>
+
+    <div id="workspaceContainer" class="workspace">
+      <!-- PANEL KIRI: DAFTAR JUDUL RAPAT -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <button type="button" id="btnOpenNewMeeting" class="btn btn-primary btn-full">
+            <i data-lucide="plus" style="width:16px;height:16px;"></i>
+            <span>Buat Rapat Baru</span>
+          </button>
+          <div class="search-box">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="searchMeetingInput" class="form-input" placeholder="Cari judul atau notulis...">
+            <button type="button" id="btnClearSearch" class="search-clear-btn hidden" title="Bersihkan pencarian" aria-label="Bersihkan pencarian">
+              <i data-lucide="x" style="width:14px;height:14px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-section-bar">
+          <span>Daftar Rapat</span>
+          <span id="meetingCountBadge">0 Dokumen</span>
+        </div>
+
+        <div id="meetingListContainer" class="meeting-list">
+          <!-- Daftar judul rapat dirender melalui JS -->
+        </div>
+      </aside>
+
+      <!-- PANEL KANAN: DETAIL RAPAT & CATATAN -->
+      <main class="main-pane">
+        <div class="detail-container">
+          <div class="mobile-back-bar">
+            <button type="button" id="btnMobileBack" class="btn btn-secondary btn-sm">
+              <i data-lucide="arrow-left" style="width:15px;height:15px;"></i>
+              <span>Kembali ke Daftar Rapat</span>
+            </button>
+          </div>
+
+          <!-- Empty State jika belum ada rapat dipilih -->
+          <div id="noMeetingSelectedState" class="empty-state">
+            <div class="empty-state-icon" aria-hidden="true">
+              <i data-lucide="notebook-pen" style="width:20px;height:20px;"></i>
+            </div>
+            <p class="empty-state-title">Belum ada rapat yang dipilih</p>
+            <p class="empty-state-desc">Pilih salah satu judul rapat di panel kiri atau buat dokumen rapat baru untuk mulai mencatat poin diskusi.</p>
+            <div class="empty-state-action">
+              <button type="button" id="btnEmptyCreateMeeting" class="btn btn-primary btn-sm">
+                <i data-lucide="plus" style="width:15px;height:15px;"></i>
+                <span>Buat Rapat Baru</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Area Aktif Rapat -->
+          <div id="activeMeetingContent" class="hidden">
+            <div class="meeting-header-card">
+              <div>
+                <div class="meeting-eyebrow">
+                  <i data-lucide="file-text" style="width:12px;height:12px;"></i>
+                  <span>Dokumen Notulen</span>
+                </div>
+                <h2 id="detailMeetingTitle" class="meeting-title-display">-</h2>
+                <div class="meeting-meta-row">
+                  <span class="meta-item">
+                    <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+                    <span id="detailMeetingDate">-</span>
+                  </span>
+                  <span class="meta-item">
+                    <i data-lucide="user" style="width:14px;height:14px;"></i>
+                    <span id="detailMeetingOrganizer">-</span>
+                  </span>
+                </div>
+              </div>
+              <div class="meeting-header-actions">
+                <button type="button" id="btnCopySummary" class="btn btn-secondary btn-sm" title="Salin ringkasan notulen ke clipboard">
+                  <i data-lucide="copy" style="width:14px;height:14px;"></i>
+                  <span>Salin Notulen</span>
+                </button>
+                <button type="button" id="btnDeleteMeeting" class="btn btn-danger-outline btn-sm" title="Hapus Rapat">
+                  <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                  <span>Hapus</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Form Tambah Poin Catatan (Word-Style Editor) -->
+            <form id="addNoteForm" class="composer-card">
+              <div class="editor-toolbar" role="toolbar" aria-label="Format Teks Catatan">
+                <div class="toolbar-group">
+                  <button type="button" class="tool-btn" data-cmd="bold" title="Tebal (Ctrl+B)" aria-label="Tebal">
+                    <i data-lucide="bold" style="width:15px;height:15px;"></i>
+                  </button>
+                  <button type="button" class="tool-btn" data-cmd="italic" title="Garis Miring (Ctrl+I)" aria-label="Garis Miring">
+                    <i data-lucide="italic" style="width:15px;height:15px;"></i>
+                  </button>
+                  <button type="button" class="tool-btn" data-cmd="underline" title="Garis Bawah (Ctrl+U)" aria-label="Garis Bawah">
+                    <i data-lucide="underline" style="width:15px;height:15px;"></i>
+                  </button>
+                  <button type="button" class="tool-btn" data-cmd="strikeThrough" title="Coret Teks" aria-label="Coret Teks">
+                    <i data-lucide="strikethrough" style="width:15px;height:15px;"></i>
+                  </button>
+                </div>
+
+                <span class="toolbar-divider"></span>
+
+                <div class="toolbar-group">
+                  <button type="button" class="tool-btn" data-cmd="justifyLeft" title="Rata Kiri" aria-label="Rata Kiri">
+                    <i data-lucide="align-left" style="width:15px;height:15px;"></i>
+                  </button>
+                  <button type="button" class="tool-btn" data-cmd="justifyCenter" title="Rata Tengah" aria-label="Rata Tengah">
+                    <i data-lucide="align-center" style="width:15px;height:15px;"></i>
+                  </button>
+                  <button type="button" class="tool-btn" data-cmd="justifyRight" title="Rata Kanan" aria-label="Rata Kanan">
+                    <i data-lucide="align-right" style="width:15px;height:15px;"></i>
+                  </button>
+                  <button type="button" class="tool-btn" data-cmd="justifyFull" title="Rata Kiri-Kanan (Justify)" aria-label="Rata Kiri-Kanan">
+                    <i data-lucide="align-justify" style="width:15px;height:15px;"></i>
+                  </button>
+                </div>
+
+                <span class="toolbar-divider"></span>
+
+                <div class="toolbar-group">
+                  <button type="button" class="tool-btn" data-cmd="insertUnorderedList" title="Daftar Poin (Bullet)" aria-label="Daftar Poin">
+                    <i data-lucide="list" style="width:15px;height:15px;"></i>
+                  </button>
+                  <button type="button" class="tool-btn" data-cmd="insertOrderedList" title="Daftar Bernomor" aria-label="Daftar Bernomor">
+                    <i data-lucide="list-ordered" style="width:15px;height:15px;"></i>
+                  </button>
+                </div>
+
+                <span class="toolbar-divider"></span>
+
+                <div class="toolbar-group">
+                  <button type="button" class="tool-btn" data-cmd="removeFormat" title="Hapus Format Teks" aria-label="Hapus Format">
+                    <i data-lucide="eraser" style="width:15px;height:15px;"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div
+                id="noteRichEditor"
+                class="rich-editor"
+                contenteditable="true"
+                role="textbox"
+                aria-multiline="true"
+                data-placeholder="Tulis deskripsi atau poin hasil rapat di sini... Gunakan toolbar di atas untuk menebalkan, garis miring, atau rata tengah."
+              ></div>
+
+              <div class="composer-footer">
+                <div class="category-selector" role="group" aria-label="Kategori Catatan">
+                  <button type="button" id="catBtnINFO" class="cat-btn active" data-cat="INFO">Umum</button>
+                  <button type="button" id="catBtnDECISION" class="cat-btn" data-cat="DECISION">Keputusan</button>
+                  <button type="button" id="catBtnACTION" class="cat-btn" data-cat="ACTION">Tindak Lanjut</button>
+                  <button type="button" id="btnEditCategories" class="btn-icon-only" title="Ubah Nama Label Kategori" aria-label="Ubah Nama Label Kategori">
+                    <i data-lucide="pencil" style="width:13px;height:13px;"></i>
+                  </button>
+                </div>
+                <div class="composer-submit-wrap">
+                  <span class="kbd-hint">Ctrl+Enter</span>
+                  <button type="submit" id="btnSubmitNote" class="btn btn-primary btn-sm">
+                    <i data-lucide="plus" style="width:15px;height:15px;"></i>
+                    <span>Tambah Catatan</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Daftar Poin Catatan -->
+            <div class="notes-section-header">
+              <h3 class="notes-section-title">
+                <span>Poin Catatan</span>
+                <span id="notesCountLabel" class="notes-count-pill">0</span>
+              </h3>
+              <div id="notesFilterBar" class="notes-filter-bar" role="group" aria-label="Filter Kategori Catatan">
+                <!-- Tombol filter kategori dirender lewat JS -->
+              </div>
+            </div>
+
+            <div id="notesListContainer" class="notes-list">
+              <!-- Item catatan dirender melalui JS -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="bottombar">
+      <div class="bottombar-left">
+        <span class="bottombar-dot" aria-hidden="true"></span>
+        <span>Workspace Notulen • Siap Catat</span>
+      </div>
+      <div class="bottombar-credit">
+        <span>Notepad by <strong>Departemen Tahfidz</strong></span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==========================================
+       MODAL BUAT RAPAT BARU
+       ========================================== -->
+  <div id="newMeetingModal" class="modal-backdrop hidden">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="newMeetingModalTitle">
+      <div class="modal-header">
+        <h3 id="newMeetingModalTitle" class="modal-title">Buat Judul Rapat Baru</h3>
+        <button type="button" class="modal-close" data-close-modal="newMeetingModal" aria-label="Tutup">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+      <form id="newMeetingForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="meetingTitleInput">Judul Rapat *</label>
+            <input type="text" id="meetingTitleInput" class="form-input" placeholder="Contoh: Rapat Koordinasi Mingguan Tim Produk" maxlength="150" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="meetingDateInput">Tanggal Rapat *</label>
+            <input type="date" id="meetingDateInput" class="form-input" required>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="meetingOrganizerInput">Notulis / Pimpinan Rapat (Opsional)</label>
+            <input type="text" id="meetingOrganizerInput" class="form-input" placeholder="Contoh: Divisi Operasional / Nama Pencatat" maxlength="80">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="newMeetingModal">Batal</button>
+          <button type="submit" id="btnSaveMeeting" class="btn btn-primary">Simpan & Mulai Mencatat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL UBAH NAMA LABEL KATEGORI
+       ========================================== -->
+  <div id="editCategoriesModal" class="modal-backdrop hidden">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="editCategoriesTitle">
+      <div class="modal-header">
+        <h3 id="editCategoriesTitle" class="modal-title">Ubah Label Kategori Catatan</h3>
+        <button type="button" class="modal-close" data-close-modal="editCategoriesModal" aria-label="Tutup">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+      <form id="editCategoriesForm">
+        <div class="modal-body">
+          <p style="margin:0 0 14px 0;font-size:13px;color:var(--color-muted);">
+            Sesuaikan nama 3 label penanda catatan sesuai istilah rapat tim Anda.
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="labelInputINFO">Label 1 (Warna Netral)</label>
+            <input type="text" id="labelInputINFO" class="form-input" maxlength="30" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="labelInputDECISION">Label 2 (Warna Hijau Zamrud)</label>
+            <input type="text" id="labelInputDECISION" class="form-input" maxlength="30" required>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="labelInputACTION">Label 3 (Warna Kuning Emas)</label>
+            <input type="text" id="labelInputACTION" class="form-input" maxlength="30" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="editCategoriesModal">Batal</button>
+          <button type="submit" id="btnSaveCategories" class="btn btn-primary">Simpan Label</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL KONFIRMASI HAPUS
+       ========================================== -->
+  <div id="confirmDeleteModal" class="modal-backdrop hidden">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="confirmDeleteTitle">
+      <div class="modal-header">
+        <h3 id="confirmDeleteTitle" class="modal-title">Konfirmasi Penghapusan</h3>
+        <button type="button" class="modal-close" data-close-modal="confirmDeleteModal" aria-label="Tutup">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmDeleteMessage" style="margin:0;color:var(--color-text);">Apakah Anda yakin ingin menghapus data ini?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="confirmDeleteModal">Batal</button>
+        <button type="button" id="btnConfirmDeleteAction" class="btn btn-danger">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script>
+    // ==========================================
+    // KONFIGURASI APLIKASI
+    // ==========================================
+
+    // true = Preview dengan data dummy lokal
+    // false = Production menggunakan Google Apps Script API
+    const IS_PREVIEW = false;
+
+    // Ganti dengan URL Web App Google Apps Script setelah deployment
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbype4I--GKITMcDbk9mGyGSzNYQA21RAtUIJFXGMgEjrIypLYNsbsubhtr0h5Rc6Bwd/exec";
+
+    // ==========================================
+    // DATA DUMMY TERISOLASI (KHUSUS MODE PREVIEW)
+    // ==========================================
+    let previewCategoryLabels = {
+      INFO: "Umum",
+      DECISION: "Keputusan",
+      ACTION: "Tindak Lanjut"
+    };
+
+    let previewMeetings = [
+      {
+        meeting_id: "MTG-1001",
+        title: "Rapat Evaluasi Kinerja Bulanan & Target Q4",
+        meeting_date: "2026-11-18",
+        organizer: "Manajemen & Operasional",
+        note_count: 3
+      },
+      {
+        meeting_id: "MTG-1002",
+        title: "Sinkronisasi Pengembangan Fitur Portal Pelanggan",
+        meeting_date: "2026-11-15",
+        organizer: "Tim Produk & IT",
+        note_count: 2
+      }
+    ];
+
+    let previewNotes = [
+      {
+        note_id: "NTE-5001",
+        meeting_id: "MTG-1001",
+        content: "Pencapaian target layanan bulan lalu berada di angka <b>94%</b>, meningkat <i>4% dibanding periode sebelumnya</i>.",
+        category: "INFO",
+        created_at: "2026-11-18T09:10:00.000Z"
+      },
+      {
+        note_id: "NTE-5002",
+        meeting_id: "MTG-1001",
+        content: "<div style=\"text-align: center;\"><b>KEPUTUSAN UTAMA RAPAT</b></div><div>Seluruh laporan mingguan wajib dikumpulkan maksimal setiap hari <u>Jumat pukul 15.00 WIB</u>.</div>",
+        category: "DECISION",
+        created_at: "2026-11-18T09:18:00.000Z"
+      },
+      {
+        note_id: "NTE-5003",
+        meeting_id: "MTG-1001",
+        content: "PIC Operasional menyusun jadwal pelatihan singkat penggunaan sistem baru paling lambat <b>Rabu depan</b>.",
+        category: "ACTION",
+        created_at: "2026-11-18T09:25:00.000Z"
+      },
+      {
+        note_id: "NTE-5004",
+        meeting_id: "MTG-1002",
+        content: "Pengujian antarmuka versi mobile sudah selesai dilakukan pada perangkat Android dan iOS.",
+        category: "INFO",
+        created_at: "2026-11-15T14:05:00.000Z"
+      },
+      {
+        note_id: "NTE-5005",
+        meeting_id: "MTG-1002",
+        content: "Rilis ke lingkungan produksi dijadwalkan pada hari <b>Senin pagi pukul 08.00 WIB</b>.",
+        category: "DECISION",
+        created_at: "2026-11-15T14:20:00.000Z"
+      }
+    ];
+
+    // ==========================================
+    // STATE APLIKASI
+    // ==========================================
+    const STATE = {
+      meetings: [],
+      activeMeetingId: null,
+      notes: [],
+      selectedCategory: "INFO",
+      noteFilter: "ALL",
+      categoryLabels: {
+        INFO: "Umum",
+        DECISION: "Keputusan",
+        ACTION: "Tindak Lanjut"
+      },
+      searchQuery: "",
+      pendingDeleteCallback: null
+    };
+
+    // ==========================================
+    // KONTRAK API CLIENT (PREVIEW & GAS)
+    // ==========================================
+    async function apiRequest(action, payload = {}) {
+      if (IS_PREVIEW) {
+        return handlePreviewApi(action, payload);
+      }
+
+      if (!GAS_URL || GAS_URL === "URL_WEB_APP_GAS") {
+        throw new Error("GAS_URL belum dikonfigurasi pada index.html.");
+      }
+
+      const body = JSON.stringify({
+        action,
+        ...payload
+      });
+
+      const response = await fetch(GAS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body
+      });
+
+      if (!response.ok) {
+        throw new Error("Gagal terhubung ke server Google Apps Script.");
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.message || "Terjadi kesalahan pada server.");
+      }
+
+      return result;
+    }
+
+    // Simulasi Backend Lengkap untuk Mode Preview
+    function handlePreviewApi(action, payload) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (action === "getSettings") {
+            return resolve({ success: true, data: { categoryLabels: { ...previewCategoryLabels } } });
+          }
+
+          if (action === "updateCategoryLabels") {
+            previewCategoryLabels = {
+              INFO: String(payload.INFO || "Umum").trim(),
+              DECISION: String(payload.DECISION || "Keputusan").trim(),
+              ACTION: String(payload.ACTION || "Tindak Lanjut").trim()
+            };
+            return resolve({
+              success: true,
+              message: "Label kategori diperbarui",
+              data: { categoryLabels: { ...previewCategoryLabels } }
+            });
+          }
+
+          if (action === "getMeetings") {
+            const enriched = previewMeetings.map(m => ({
+              ...m,
+              note_count: previewNotes.filter(n => n.meeting_id === m.meeting_id).length
+            }));
+            return resolve({ success: true, data: enriched });
+          }
+
+          if (action === "createMeeting") {
+            const newMtg = {
+              meeting_id: "MTG-" + Date.now(),
+              title: payload.title.trim(),
+              meeting_date: payload.meeting_date,
+              organizer: (payload.organizer || "").trim() || "Umum",
+              note_count: 0
+            };
+            previewMeetings.unshift(newMtg);
+            return resolve({ success: true, message: "Judul rapat berhasil dibuat", data: newMtg });
+          }
+
+          if (action === "deleteMeeting") {
+            previewMeetings = previewMeetings.filter(m => m.meeting_id !== payload.meeting_id);
+            previewNotes = previewNotes.filter(n => n.meeting_id !== payload.meeting_id);
+            return resolve({ success: true, message: "Rapat dan seluruh catatannya dihapus", data: null });
+          }
+
+          if (action === "getNotes") {
+            const list = previewNotes.filter(n => n.meeting_id === payload.meeting_id);
+            return resolve({ success: true, data: list });
+          }
+
+          if (action === "addNote") {
+            const newNote = {
+              note_id: "NTE-" + Date.now(),
+              meeting_id: payload.meeting_id,
+              content: payload.content.trim(),
+              category: payload.category || "INFO",
+              created_at: new Date().toISOString()
+            };
+            previewNotes.push(newNote);
+            return resolve({ success: true, message: "Catatan ditambahkan", data: newNote });
+          }
+
+          if (action === "deleteNote") {
+            previewNotes = previewNotes.filter(n => n.note_id !== payload.note_id);
+            return resolve({ success: true, message: "Catatan berhasil dihapus", data: null });
+          }
+
+          reject(new Error("Action tidak dikenali."));
+        }, 120);
+      });
+    }
+
+    // ==========================================
+    // SANITASI HTML & HELPER FORMATTING
+    // ==========================================
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function sanitizeRichHtml(dirtyHtml) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(String(dirtyHtml || ""), "text/html");
+      const allowedTags = new Set([
+        "B", "STRONG", "I", "EM", "U", "S", "STRIKE", "DEL",
+        "DIV", "P", "BR", "UL", "OL", "LI", "SPAN"
+      ]);
+
+      function cleanNode(node) {
+        const children = Array.from(node.childNodes);
+        children.forEach(child => {
+          if (child.nodeType === Node.ELEMENT_NODE) {
+            if (!allowedTags.has(child.tagName)) {
+              const textFallback = document.createTextNode(child.textContent || "");
+              node.replaceChild(textFallback, child);
+              return;
+            }
+            const align = child.style ? child.style.textAlign : "";
+            Array.from(child.attributes).forEach(attr => child.removeAttribute(attr.name));
+            if (align && ["left", "center", "right", "justify"].includes(align)) {
+              child.style.textAlign = align;
+            }
+            cleanNode(child);
+          } else if (child.nodeType !== Node.TEXT_NODE) {
+            node.removeChild(child);
+          }
+        });
+      }
+
+      cleanNode(doc.body);
+      return doc.body.innerHTML;
+    }
+
+    function showToast(message, type = "default") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 3200);
+    }
+
+    function formatDateIndo(dateStr) {
+      if (!dateStr) return "-";
+      const parts = String(dateStr).split("T")[0].split("-");
+      if (parts.length !== 3) return dateStr;
+      const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+      const mIdx = parseInt(parts[1], 10) - 1;
+      return `${parseInt(parts[2], 10)} ${months[mIdx] || parts[1]} ${parts[0]}`;
+    }
+
+    function formatTimeShort(isoStr) {
+      if (!isoStr) return "";
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return "";
+      return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function getCategoryLabel(cat) {
+      return STATE.categoryLabels[cat] || STATE.categoryLabels.INFO || "Umum";
+    }
+
+    function renderCategoryButtons() {
+      document.getElementById("catBtnINFO").textContent = STATE.categoryLabels.INFO;
+      document.getElementById("catBtnDECISION").textContent = STATE.categoryLabels.DECISION;
+      document.getElementById("catBtnACTION").textContent = STATE.categoryLabels.ACTION;
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove("hidden");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add("hidden");
+    }
+
+    function initEnvironmentBadge() {
+      const badge = document.getElementById("envBadge");
+      if (IS_PREVIEW) {
+        badge.textContent = "PREVIEW";
+        badge.classList.remove("live");
+      } else {
+        badge.textContent = "LIVE GAS";
+        badge.classList.add("live");
+      }
+      renderCategoryButtons();
+    }
+
+    function renderMeetingList() {
+      const container = document.getElementById("meetingListContainer");
+      const countBadge = document.getElementById("meetingCountBadge");
+      const query = STATE.searchQuery.trim().toLowerCase();
+      const filtered = STATE.meetings.filter(m =>
+        m.title.toLowerCase().includes(query) ||
+        (m.organizer && m.organizer.toLowerCase().includes(query))
+      );
+
+      if (countBadge) {
+        countBadge.textContent = `${filtered.length} Dokumen`;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="padding:28px 14px;text-align:center;color:var(--color-muted);font-size:13px;border:1.5px dashed var(--color-border-strong);border-radius:4px;background-color:var(--color-surface-muted);">
+            ${STATE.meetings.length === 0 ? "Belum ada daftar rapat." : "Judul rapat tidak ditemukan."}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(m => {
+        const isActive = m.meeting_id === STATE.activeMeetingId;
+        return `
+          <button type="button" class="meeting-item ${isActive ? "active" : ""}" data-meeting-id="${escapeHtml(m.meeting_id)}">
+            <div class="meeting-item-title">${escapeHtml(m.title)}</div>
+            <div class="meeting-item-meta">
+              <span>${formatDateIndo(m.meeting_date)}</span>
+              <span class="note-count-tag">${m.note_count || 0} poin</span>
+            </div>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function renderNotesFilterBar() {
+      const filterBar = document.getElementById("notesFilterBar");
+      if (!filterBar) return;
+
+      const counts = {
+        ALL: STATE.notes.length,
+        INFO: STATE.notes.filter(n => (n.category || "INFO") === "INFO").length,
+        DECISION: STATE.notes.filter(n => n.category === "DECISION").length,
+        ACTION: STATE.notes.filter(n => n.category === "ACTION").length
+      };
+
+      const filters = [
+        { key: "ALL", label: "Semua" },
+        { key: "INFO", label: STATE.categoryLabels.INFO },
+        { key: "DECISION", label: STATE.categoryLabels.DECISION },
+        { key: "ACTION", label: STATE.categoryLabels.ACTION }
+      ];
+
+      filterBar.innerHTML = filters.map(f => `
+        <button type="button" class="filter-pill ${STATE.noteFilter === f.key ? "active" : ""}" data-filter="${f.key}">
+          <span>${escapeHtml(f.label)}</span>
+          <span class="filter-pill-count">${counts[f.key]}</span>
+        </button>
+      `).join("");
+    }
+
+    function renderActiveMeetingDetail() {
+      const emptyEl = document.getElementById("noMeetingSelectedState");
+      const activeEl = document.getElementById("activeMeetingContent");
+      const meeting = STATE.meetings.find(m => m.meeting_id === STATE.activeMeetingId);
+
+      if (!meeting) {
+        emptyEl.classList.remove("hidden");
+        activeEl.classList.add("hidden");
+        return;
+      }
+
+      emptyEl.classList.add("hidden");
+      activeEl.classList.remove("hidden");
+
+      document.getElementById("detailMeetingTitle").textContent = meeting.title;
+      document.getElementById("detailMeetingDate").textContent = formatDateIndo(meeting.meeting_date);
+      document.getElementById("detailMeetingOrganizer").textContent = meeting.organizer || "Umum";
+      document.getElementById("notesCountLabel").textContent = STATE.notes.length;
+
+      renderNotesFilterBar();
+
+      const notesContainer = document.getElementById("notesListContainer");
+      const visibleNotes = STATE.noteFilter === "ALL"
+        ? STATE.notes
+        : STATE.notes.filter(n => (n.category || "INFO") === STATE.noteFilter);
+
+      if (STATE.notes.length === 0) {
+        notesContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon" aria-hidden="true">
+              <i data-lucide="pen-line" style="width:18px;height:18px;"></i>
+            </div>
+            <p class="empty-state-title">Belum ada poin catatan</p>
+            <p class="empty-state-desc">Tulis hasil diskusi pertama rapat ini pada kotak editor di atas.</p>
+          </div>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      if (visibleNotes.length === 0) {
+        notesContainer.innerHTML = `
+          <div class="empty-state">
+            <p class="empty-state-title">Tidak ada catatan di kategori ini</p>
+            <p class="empty-state-desc">Pilih filter <strong>Semua</strong> untuk melihat seluruh poin rapat.</p>
+          </div>
+        `;
+        return;
+      }
+
+      notesContainer.innerHTML = visibleNotes.map(note => {
+        const cat = note.category || "INFO";
+        return `
+          <article class="note-card" data-cat="${escapeHtml(cat)}">
+            <div class="note-body">
+              <div class="note-top-meta">
+                <span class="note-badge ${escapeHtml(cat)}">${escapeHtml(getCategoryLabel(cat))}</span>
+                <span class="note-timestamp">Pukul ${formatTimeShort(note.created_at)}</span>
+              </div>
+              <div class="note-rich-content">${sanitizeRichHtml(note.content)}</div>
+            </div>
+            <button type="button" class="btn btn-danger-outline btn-sm btn-delete-note" data-note-id="${escapeHtml(note.note_id)}" title="Hapus catatan ini" aria-label="Hapus catatan ini">
+              <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
+              <span>Hapus</span>
+            </button>
+          </article>
+        `;
+      }).join("");
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ==========================================
+    // DATA LOADING ACTIONS
+    // ==========================================
+    async function loadAppSettings() {
+      try {
+        const res = await apiRequest("getSettings");
+        if (res.data && res.data.categoryLabels) {
+          STATE.categoryLabels = {
+            ...STATE.categoryLabels,
+            ...res.data.categoryLabels
+          };
+          renderCategoryButtons();
+        }
+      } catch (_) {}
+    }
+
+    async function loadMeetings(selectFirstIfNone = true) {
+      try {
+        const res = await apiRequest("getMeetings");
+        STATE.meetings = res.data || [];
+
+        if (selectFirstIfNone && !STATE.activeMeetingId && STATE.meetings.length > 0 && window.innerWidth >= 900) {
+          STATE.activeMeetingId = STATE.meetings[0].meeting_id;
+        }
+
+        renderMeetingList();
+
+        if (STATE.activeMeetingId) {
+          await loadNotesForActiveMeeting();
+        } else {
+          renderActiveMeetingDetail();
+        }
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    async function loadNotesForActiveMeeting() {
+      if (!STATE.activeMeetingId) return;
+      try {
+        const res = await apiRequest("getNotes", { meeting_id: STATE.activeMeetingId });
+        STATE.notes = res.data || [];
+        renderActiveMeetingDetail();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    async function selectMeeting(meetingId) {
+      STATE.activeMeetingId = meetingId;
+      STATE.noteFilter = "ALL";
+      renderMeetingList();
+      document.getElementById("workspaceContainer").classList.add("mobile-detail-open");
+      await loadNotesForActiveMeeting();
+    }
+
+    // ==========================================
+    // RICH TEXT TOOLBAR LOGIC
+    // ==========================================
+    function updateToolbarActiveStates() {
+      const commands = [
+        "bold", "italic", "underline", "strikeThrough",
+        "justifyLeft", "justifyCenter", "justifyRight", "justifyFull",
+        "insertUnorderedList", "insertOrderedList"
+      ];
+      commands.forEach(cmd => {
+        const btn = document.querySelector(`.tool-btn[data-cmd="${cmd}"]`);
+        if (!btn) return;
+        try {
+          if (document.queryCommandState(cmd)) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        } catch (_) {
+          btn.classList.remove("active");
+        }
+      });
+    }
+
+    // ==========================================
+    // EVENT LISTENERS
+    // ==========================================
+    document.addEventListener("DOMContentLoaded", async () => {
+      lucide.createIcons();
+      initEnvironmentBadge();
+
+      await loadAppSettings();
+      await loadMeetings(true);
+
+      // Segarkan Data Manual
+      document.getElementById("btnRefreshData").addEventListener("click", async () => {
+        const btn = document.getElementById("btnRefreshData");
+        btn.disabled = true;
+        await loadAppSettings();
+        await loadMeetings(false);
+        btn.disabled = false;
+        showToast("Data rapat disegarkan");
+      });
+
+      // Pencarian Judul Rapat + Tombol Bersihkan
+      const searchInput = document.getElementById("searchMeetingInput");
+      const clearSearchBtn = document.getElementById("btnClearSearch");
+
+      searchInput.addEventListener("input", (e) => {
+        STATE.searchQuery = e.target.value;
+        clearSearchBtn.classList.toggle("hidden", !STATE.searchQuery);
+        renderMeetingList();
+      });
+
+      clearSearchBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        STATE.searchQuery = "";
+        clearSearchBtn.classList.add("hidden");
+        renderMeetingList();
+        searchInput.focus();
+      });
+
+      // Filter Kategori Catatan
+      document.getElementById("notesFilterBar").addEventListener("click", (e) => {
+        const pill = e.target.closest(".filter-pill");
+        if (!pill) return;
+        STATE.noteFilter = pill.getAttribute("data-filter") || "ALL";
+        renderActiveMeetingDetail();
+      });
+
+      // Salin Ringkasan Notulen
+      document.getElementById("btnCopySummary").addEventListener("click", async () => {
+        const meeting = STATE.meetings.find(m => m.meeting_id === STATE.activeMeetingId);
+        if (!meeting) return;
+
+        const tempDiv = document.createElement("div");
+        const lines = [
+          `*${meeting.title}*`,
+          `Tanggal: ${formatDateIndo(meeting.meeting_date)}`,
+          `Notulis/Pimpinan: ${meeting.organizer || "Umum"}`,
+          ""
+        ];
+
+        if (STATE.notes.length === 0) {
+          lines.push("(Belum ada poin catatan)");
+        } else {
+          STATE.notes.forEach((n, idx) => {
+            tempDiv.innerHTML = sanitizeRichHtml(n.content);
+            const plain = (tempDiv.textContent || "").replace(/\s+/g, " ").trim();
+            const label = getCategoryLabel(n.category || "INFO");
+            lines.push(`${idx + 1}. [${label}] ${plain}`);
+          });
+        }
+
+        const summaryText = lines.join("\n");
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(summaryText);
+          } else {
+            const ta = document.createElement("textarea");
+            ta.value = summaryText;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
+          }
+          showToast("Notulen disalin ke clipboard", "success");
+        } catch (_) {
+          showToast("Gagal menyalin notulen ke clipboard", "error");
+        }
+      });
+
+      // Pilih Rapat dari Sidebar
+      document.getElementById("meetingListContainer").addEventListener("click", (e) => {
+        const item = e.target.closest(".meeting-item");
+        if (!item) return;
+        const id = item.getAttribute("data-meeting-id");
+        selectMeeting(id);
+      });
+
+      // Tombol Kembali (Mobile)
+      document.getElementById("btnMobileBack").addEventListener("click", () => {
+        document.getElementById("workspaceContainer").classList.remove("mobile-detail-open");
+      });
+
+      // Buka Modal Rapat Baru (dari Sidebar maupun Empty State)
+      const openNewMeetingModal = () => {
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("meetingDateInput").value = today;
+        document.getElementById("meetingTitleInput").value = "";
+        document.getElementById("meetingOrganizerInput").value = "";
+        openModal("newMeetingModal");
+        setTimeout(() => document.getElementById("meetingTitleInput").focus(), 50);
+      };
+
+      document.getElementById("btnOpenNewMeeting").addEventListener("click", openNewMeetingModal);
+      document.getElementById("btnEmptyCreateMeeting").addEventListener("click", openNewMeetingModal);
+
+      // Submit Rapat Baru
+      document.getElementById("newMeetingForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("btnSaveMeeting");
+        const title = document.getElementById("meetingTitleInput").value.trim();
+        const meeting_date = document.getElementById("meetingDateInput").value;
+        const organizer = document.getElementById("meetingOrganizerInput").value.trim();
+
+        if (!title || !meeting_date) return;
+
+        btn.disabled = true;
+        btn.textContent = "Menyimpan...";
+
+        try {
+          const res = await apiRequest("createMeeting", { title, meeting_date, organizer });
+          closeModal("newMeetingModal");
+          STATE.activeMeetingId = res.data.meeting_id;
+          STATE.noteFilter = "ALL";
+          await loadMeetings(false);
+          document.getElementById("workspaceContainer").classList.add("mobile-detail-open");
+          showToast("Judul rapat baru berhasil dibuat", "success");
+        } catch (err) {
+          showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Simpan & Mulai Mencatat";
+        }
+      });
+
+      // Rich Text Toolbar Actions
+      const editorEl = document.getElementById("noteRichEditor");
+
+      document.querySelectorAll(".tool-btn").forEach(btn => {
+        btn.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          const cmd = btn.getAttribute("data-cmd");
+          editorEl.focus();
+          document.execCommand(cmd, false, null);
+          updateToolbarActiveStates();
+        });
+      });
+
+      editorEl.addEventListener("keyup", updateToolbarActiveStates);
+      editorEl.addEventListener("mouseup", updateToolbarActiveStates);
+      editorEl.addEventListener("focus", updateToolbarActiveStates);
+
+      editorEl.addEventListener("paste", (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+        document.execCommand("insertText", false, text);
+      });
+
+      editorEl.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("addNoteForm").requestSubmit();
+        }
+      });
+
+      // Pilih Kategori Catatan
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          STATE.selectedCategory = btn.getAttribute("data-cat");
+        });
+      });
+
+      // Edit Label Kategori Sendiri
+      document.getElementById("btnEditCategories").addEventListener("click", () => {
+        document.getElementById("labelInputINFO").value = STATE.categoryLabels.INFO;
+        document.getElementById("labelInputDECISION").value = STATE.categoryLabels.DECISION;
+        document.getElementById("labelInputACTION").value = STATE.categoryLabels.ACTION;
+        openModal("editCategoriesModal");
+      });
+
+      document.getElementById("editCategoriesForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("btnSaveCategories");
+        const INFO = document.getElementById("labelInputINFO").value.trim();
+        const DECISION = document.getElementById("labelInputDECISION").value.trim();
+        const ACTION = document.getElementById("labelInputACTION").value.trim();
+
+        if (!INFO || !DECISION || !ACTION) return;
+
+        btn.disabled = true;
+        btn.textContent = "Menyimpan...";
+
+        try {
+          const res = await apiRequest("updateCategoryLabels", { INFO, DECISION, ACTION });
+          STATE.categoryLabels = res.data.categoryLabels;
+          renderCategoryButtons();
+          renderActiveMeetingDetail();
+          closeModal("editCategoriesModal");
+          showToast("Label kategori berhasil diperbarui", "success");
+        } catch (err) {
+          showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Simpan Label";
+        }
+      });
+
+      // Tambah Poin Catatan Rapat
+      document.getElementById("addNoteForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!STATE.activeMeetingId) return;
+
+        const plainText = editorEl.textContent.trim();
+        const cleanHtml = sanitizeRichHtml(editorEl.innerHTML).trim();
+
+        if (!plainText && !cleanHtml) {
+          showToast("Isi deskripsi catatan tidak boleh kosong.", "error");
+          editorEl.focus();
+          return;
+        }
+
+        const btn = document.getElementById("btnSubmitNote");
+        btn.disabled = true;
+
+        try {
+          await apiRequest("addNote", {
+            meeting_id: STATE.activeMeetingId,
+            content: cleanHtml,
+            category: STATE.selectedCategory
+          });
+          editorEl.innerHTML = "";
+          updateToolbarActiveStates();
+          if (STATE.noteFilter !== "ALL" && STATE.noteFilter !== STATE.selectedCategory) {
+            STATE.noteFilter = "ALL";
+          }
+          await loadNotesForActiveMeeting();
+          await loadMeetings(false);
+          showToast("Catatan berhasil ditambahkan", "success");
+        } catch (err) {
+          showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+          editorEl.focus();
+        }
+      });
+
+      // Hapus Satu Poin Catatan (Delegation)
+      document.getElementById("notesListContainer").addEventListener("click", (e) => {
+        const delBtn = e.target.closest(".btn-delete-note");
+        if (!delBtn) return;
+
+        const noteId = delBtn.getAttribute("data-note-id");
+        document.getElementById("confirmDeleteMessage").textContent =
+          "Apakah Anda yakin ingin menghapus poin catatan ini? Tindakan ini tidak dapat dibatalkan.";
+
+        STATE.pendingDeleteCallback = async () => {
+          await apiRequest("deleteNote", { note_id: noteId });
+          await loadNotesForActiveMeeting();
+          await loadMeetings(false);
+          showToast("Poin catatan dihapus", "success");
+        };
+
+        openModal("confirmDeleteModal");
+      });
+
+      // Hapus Seluruh Dokumen Rapat
+      document.getElementById("btnDeleteMeeting").addEventListener("click", () => {
+        if (!STATE.activeMeetingId) return;
+        const meeting = STATE.meetings.find(m => m.meeting_id === STATE.activeMeetingId);
+        document.getElementById("confirmDeleteMessage").textContent =
+          `Hapus rapat "${meeting ? meeting.title : ""}" beserta seluruh poin catatan di dalamnya?`;
+
+        STATE.pendingDeleteCallback = async () => {
+          const targetId = STATE.activeMeetingId;
+          await apiRequest("deleteMeeting", { meeting_id: targetId });
+          STATE.activeMeetingId = null;
+          STATE.notes = [];
+          document.getElementById("workspaceContainer").classList.remove("mobile-detail-open");
+          await loadMeetings(true);
+          showToast("Dokumen rapat berhasil dihapus", "success");
+        };
+
+        openModal("confirmDeleteModal");
+      });
+
+      // Eksekusi Konfirmasi Hapus
+      document.getElementById("btnConfirmDeleteAction").addEventListener("click", async () => {
+        if (!STATE.pendingDeleteCallback) return;
+        const btn = document.getElementById("btnConfirmDeleteAction");
+        btn.disabled = true;
+        btn.textContent = "Menghapus...";
+        try {
+          await STATE.pendingDeleteCallback();
+          closeModal("confirmDeleteModal");
+        } catch (err) {
+          showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Ya, Hapus";
+          STATE.pendingDeleteCallback = null;
+        }
+      });
+
+      // Tutup Modal Universal (Tombol, Klik Backdrop, dan Escape)
+      document.querySelectorAll("[data-close-modal]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          closeModal(btn.getAttribute("data-close-modal"));
+        });
+      });
+
+      document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
+        backdrop.addEventListener("click", (e) => {
+          if (e.target === backdrop) {
+            closeModal(backdrop.id);
+          }
+        });
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          document.querySelectorAll(".modal-backdrop:not(.hidden)").forEach(modal => {
+            closeModal(modal.id);
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
